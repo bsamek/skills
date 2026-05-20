@@ -90,7 +90,14 @@ class TestCheckPluginJson(unittest.TestCase):
             p = Path(tmp) / "plugin.json"
             p.write_text("{not valid json")
             errors = self.v.check_plugin_json(p)
-        self.assertTrue(len(errors) > 0, errors)
+        self.assertTrue(
+            any(
+                word in e.lower()
+                for e in errors
+                for word in ("invalid", "json", "parse")
+            ),
+            errors,
+        )
 
     def test_missing_description_fails(self):
         data = {k: v for k, v in GOOD_PLUGIN_JSON.items() if k != "description"}
@@ -177,7 +184,6 @@ class TestCheckSkillMd(unittest.TestCase):
 
 class TestRealRepo(unittest.TestCase):
     def test_real_repo_passes(self):
-        """The current repo should pass all validation checks."""
         import subprocess
         result = subprocess.run(
             [sys.executable, str(VALIDATE_PY)],
