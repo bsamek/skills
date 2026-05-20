@@ -197,5 +197,71 @@ class TestRealRepo(unittest.TestCase):
         )
 
 
+REPO_ROOT = Path(__file__).parent.parent
+WORKFLOW_PATH = REPO_ROOT / ".github" / "workflows" / "validate.yml"
+
+
+class TestWorkflowFile(unittest.TestCase):
+    """Structural tests for .github/workflows/validate.yml."""
+
+    def _load_workflow(self):
+        self.assertTrue(
+            WORKFLOW_PATH.exists(),
+            f"Workflow file not found: {WORKFLOW_PATH}",
+        )
+        import yaml
+        with WORKFLOW_PATH.open() as fh:
+            return yaml.safe_load(fh)
+
+    def test_file_exists(self):
+        self.assertTrue(
+            WORKFLOW_PATH.exists(),
+            f"Expected workflow at {WORKFLOW_PATH}",
+        )
+
+    def test_valid_yaml(self):
+        workflow = self._load_workflow()
+        self.assertIsNotNone(workflow)
+
+    def test_triggers_push_and_pull_request(self):
+        workflow = self._load_workflow()
+        on = workflow.get("on", {})
+        self.assertIn("push", on, "Workflow must trigger on push")
+        self.assertIn("pull_request", on, "Workflow must trigger on pull_request")
+
+    def test_runner_is_ubuntu_latest(self):
+        workflow = self._load_workflow()
+        jobs = workflow.get("jobs", {})
+        self.assertTrue(len(jobs) > 0, "Workflow must have at least one job")
+        for job_name, job in jobs.items():
+            self.assertEqual(
+                job.get("runs-on"),
+                "ubuntu-latest",
+                f"Job '{job_name}' must use ubuntu-latest runner",
+            )
+
+    def test_validate_command_present(self):
+        workflow = self._load_workflow()
+        jobs = workflow.get("jobs", {})
+        found = False
+        for job in jobs.values():
+            for step in job.get("steps", []):
+                run_cmd = step.get("run", "")
+                if "python3 scripts/validate.py" in run_cmd:
+                    found = True
+        self.assertTrue(found, "No step found running 'python3 scripts/validate.py'")
+
+    def test_checkout_step_present(self):
+        workflow = self._load_workflow()
+        jobs = workflow.get("jobs", {})
+        found = False
+        for job in jobs.values():
+            for step in job.get("steps", []):
+                uses = step.get("uses", "")
+                if uses.startswith("actions/checkout"):
+                    found = True
+        self.assertTrue(found, "No checkout step found in workflow")
+
+
 if __name__ == "__main__":
     unittest.main()
