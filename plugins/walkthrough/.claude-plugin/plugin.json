@@ -1,0 +1,6 @@
+{
+  "name": "walkthrough",
+  "description": "Chunk-by-chunk self-review of a branch's diff.",
+  "version": "0.1.0",
+  "author": { "name": "Brian Samek" }
+}
