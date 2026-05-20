@@ -1,19 +1,13 @@
-"""Tests for validate.py — red phase first, then implementation makes them green."""
+"""Unit and integration tests for validate.py."""
 
 import importlib.util
 import json
-import os
 import sys
 import tempfile
 import textwrap
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
-# ---------------------------------------------------------------------------
-# Helper: load validate module from the same directory, even before the file
-# exists (the import will fail, and tests can handle that separately).
-# ---------------------------------------------------------------------------
 SCRIPTS_DIR = Path(__file__).parent
 VALIDATE_PY = SCRIPTS_DIR / "validate.py"
 
@@ -25,9 +19,6 @@ def _import_validate():
     return mod
 
 
-# ---------------------------------------------------------------------------
-# Fixtures
-# ---------------------------------------------------------------------------
 GOOD_PLUGIN_JSON = {
     "name": "bsamek",
     "description": "A fine plugin.",
@@ -44,9 +35,6 @@ GOOD_SKILL_MD = textwrap.dedent("""\
 """)
 
 
-# ---------------------------------------------------------------------------
-# Tests for check_plugin_json
-# ---------------------------------------------------------------------------
 class TestCheckPluginJson(unittest.TestCase):
     def setUp(self):
         self.v = _import_validate()
@@ -112,9 +100,6 @@ class TestCheckPluginJson(unittest.TestCase):
         self.assertTrue(any("description" in e.lower() for e in errors), errors)
 
 
-# ---------------------------------------------------------------------------
-# Tests for check_skill_md
-# ---------------------------------------------------------------------------
 class TestCheckSkillMd(unittest.TestCase):
     def setUp(self):
         self.v = _import_validate()
@@ -190,9 +175,6 @@ class TestCheckSkillMd(unittest.TestCase):
         self.assertTrue(any("description" in e.lower() for e in errors), errors)
 
 
-# ---------------------------------------------------------------------------
-# Integration: run the real script against the real repo
-# ---------------------------------------------------------------------------
 class TestRealRepo(unittest.TestCase):
     def test_real_repo_passes(self):
         """The current repo should pass all validation checks."""
