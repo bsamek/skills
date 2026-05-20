@@ -1,16 +1,4 @@
 #!/usr/bin/env python3
-"""Validate plugin.json and SKILL.md files in the skills repo.
-
-Checks:
-  - plugins/bsamek/.claude-plugin/plugin.json is valid JSON with required
-    fields (name, description, version) that are non-empty strings, a
-    semver version, and an author object with a non-empty name string.
-  - Every SKILL.md under plugins/ has YAML frontmatter with non-empty
-    name and description fields, and name matches the parent directory.
-
-Exits 0 if all checks pass, non-zero otherwise.
-"""
-
 import json
 import re
 import sys
@@ -22,7 +10,6 @@ SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 
 
 def check_plugin_json(path: Path) -> list[str]:
-    """Return a list of error strings; empty list means all checks passed."""
     errors: list[str] = []
 
     try:
@@ -35,6 +22,7 @@ def check_plugin_json(path: Path) -> list[str]:
         errors.append(f"plugin.json: cannot read — {exc}")
         return errors
 
+    version = data.get("version", "")
     for field in ("name", "description", "version"):
         val = data.get(field)
         if not isinstance(val, str) or not val.strip():
@@ -48,7 +36,6 @@ def check_plugin_json(path: Path) -> list[str]:
         if not isinstance(author_name, str) or not author_name.strip():
             errors.append("plugin.json: 'author.name' must be a non-empty string")
 
-    version = data.get("version", "")
     if isinstance(version, str) and version.strip() and not SEMVER_RE.match(version):
         errors.append(
             f"plugin.json: 'version' must be semver (X.Y.Z), got '{version}'"
@@ -58,7 +45,6 @@ def check_plugin_json(path: Path) -> list[str]:
 
 
 def _parse_frontmatter(text: str) -> dict[str, str] | None:
-    """Return the frontmatter key/value pairs, or None if no frontmatter found."""
     lines = text.splitlines()
     if not lines or lines[0].strip() != "---":
         return None
@@ -79,7 +65,6 @@ def _parse_frontmatter(text: str) -> dict[str, str] | None:
 
 
 def check_skill_md(path: Path) -> list[str]:
-    """Return a list of error strings; empty list means all checks passed."""
     errors: list[str] = []
 
     try:
