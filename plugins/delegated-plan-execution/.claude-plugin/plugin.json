@@ -1,0 +1,8 @@
+{
+  "name": "delegated-plan-execution",
+  "description": "Orchestrate Plan-mode execution by delegating to Sonnet implementer + validators.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Brian Samek"
+  }
+}
