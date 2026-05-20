@@ -1,10 +1,7 @@
 {
-  "name": "bsamek-skills",
+  "name": "skills",
   "owner": { "name": "Brian Samek" },
   "plugins": [
-    { "name": "delegated-plan-execution", "source": "./plugins/delegated-plan-execution", "description": "Orchestrate Plan-mode execution by delegating to Sonnet implementer + validators." },
-    { "name": "inbox", "source": "./plugins/inbox", "description": "Process a Things GTD inbox." },
-    { "name": "preflight", "source": "./plugins/preflight", "description": "Parallel Opus + OpenCode review of a branch before PR." },
-    { "name": "walkthrough", "source": "./plugins/walkthrough", "description": "Chunk-by-chunk self-review of a branch's diff." }
+    { "name": "bsamek", "source": "./plugins/bsamek", "description": "Brian Samek's personal Claude Code skills (preflight, walkthrough, delegated-plan-execution, inbox)." }
   ]
 }
