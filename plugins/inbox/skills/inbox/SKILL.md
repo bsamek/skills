@@ -3,7 +3,9 @@ name: inbox
 description: Use when the user invokes /inbox to process their GTD inbox in Things.
 ---
 
-Process Brian's GTD inbox items, deciding where each item belongs in Things.
+Process the user's GTD inbox items, deciding where each item belongs in Things.
+
+> **Setup note**: This skill assumes Things 3 (via an MCP server exposing `get_inbox`, `get_projects`, `add_project`, `update_todo`) and an Obsidian vault rooted at `~/obsidian/` with `projects/`, `notes/`, and `areas/` subfolders. Adjust the paths in step 3 to match your own vault layout.
 
 ## Step 1: Gather inbox items
 
@@ -71,4 +73,4 @@ Inbox processed: X items
 
 ## Style rules
 
-- Do not prefix Slack channel names with `#` in Obsidian (use `ask-mongogpt`, not `#ask-mongogpt`).
+- Do not prefix Slack channel names with `#` in Obsidian (use `general`, not `#general`).
