@@ -14,6 +14,7 @@ VALIDATE_PY = SCRIPTS_DIR / "validate.py"
 
 def _import_validate():
     spec = importlib.util.spec_from_file_location("validate", VALIDATE_PY)
+    assert spec is not None and spec.loader is not None
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
