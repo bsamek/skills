@@ -1,0 +1,8 @@
+{
+  "name": "preflight",
+  "description": "Parallel Opus + OpenCode review of a branch before PR.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Brian Samek"
+  }
+}
