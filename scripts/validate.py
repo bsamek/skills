@@ -97,18 +97,21 @@ def check_skill_md(path: Path) -> list[str]:
     return errors
 
 
+def _report(label: str, errors: list[str]) -> bool:
+    print(f"Checking {label} …")
+    if errors:
+        for e in errors:
+            print(f"  FAIL  {e}")
+        return False
+    print("  OK")
+    return True
+
+
 def main() -> int:
     all_ok = True
 
     # --- plugin.json ---
-    print(f"Checking {PLUGIN_JSON} …")
-    errors = check_plugin_json(PLUGIN_JSON)
-    if errors:
-        for e in errors:
-            print(f"  FAIL  {e}")
-        all_ok = False
-    else:
-        print("  OK")
+    all_ok &= _report(str(PLUGIN_JSON), check_plugin_json(PLUGIN_JSON))
 
     # --- SKILL.md files ---
     plugins_root = REPO_ROOT / "plugins"
@@ -116,21 +119,15 @@ def main() -> int:
     if not skill_files:
         print("WARNING: no SKILL.md files found under plugins/")
     for skill_md in skill_files:
-        print(f"Checking {skill_md.relative_to(REPO_ROOT)} …")
-        errors = check_skill_md(skill_md)
-        if errors:
-            for e in errors:
-                print(f"  FAIL  {e}")
-            all_ok = False
-        else:
-            print("  OK")
+        all_ok &= _report(
+            str(skill_md.relative_to(REPO_ROOT)), check_skill_md(skill_md)
+        )
 
     if all_ok:
         print("\nAll checks passed.")
         return 0
-    else:
-        print("\nOne or more checks FAILED.")
-        return 1
+    print("\nOne or more checks FAILED.")
+    return 1
 
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import subprocess
 import sys
 import tempfile
 import textwrap
@@ -20,6 +21,14 @@ def _import_validate():
     return mod
 
 
+def _assert_has_error(errors: list[str], *keywords: str) -> None:
+    assert any(kw in e.lower() for e in errors for kw in keywords), (
+        f"Expected error mentioning {keywords!r}, got: {errors}"
+    )
+
+
+_V = _import_validate()
+
 GOOD_PLUGIN_JSON = {
     "name": "bsamek",
     "description": "A fine plugin.",
@@ -37,9 +46,6 @@ GOOD_SKILL_MD = textwrap.dedent("""\
 
 
 class TestCheckPluginJson(unittest.TestCase):
-    def setUp(self):
-        self.v = _import_validate()
-
     def _write_json(self, tmp, data):
         p = Path(tmp) / "plugin.json"
         p.write_text(json.dumps(data))
@@ -48,70 +54,60 @@ class TestCheckPluginJson(unittest.TestCase):
     def test_good_plugin_passes(self):
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_json(tmp, GOOD_PLUGIN_JSON)
-            errors = self.v.check_plugin_json(p)
+            errors = _V.check_plugin_json(p)
         self.assertEqual(errors, [])
 
     def test_missing_version_fails(self):
         data = {k: v for k, v in GOOD_PLUGIN_JSON.items() if k != "version"}
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_json(tmp, data)
-            errors = self.v.check_plugin_json(p)
-        self.assertTrue(any("version" in e.lower() for e in errors), errors)
+            errors = _V.check_plugin_json(p)
+        _assert_has_error(errors, "version")
 
     def test_empty_name_fails(self):
         data = {**GOOD_PLUGIN_JSON, "name": ""}
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_json(tmp, data)
-            errors = self.v.check_plugin_json(p)
-        self.assertTrue(any("name" in e.lower() for e in errors), errors)
+            errors = _V.check_plugin_json(p)
+        _assert_has_error(errors, "name")
 
     def test_bad_semver_fails(self):
         data = {**GOOD_PLUGIN_JSON, "version": "1.0"}
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_json(tmp, data)
-            errors = self.v.check_plugin_json(p)
-        self.assertTrue(any("version" in e.lower() for e in errors), errors)
+            errors = _V.check_plugin_json(p)
+        _assert_has_error(errors, "version")
 
     def test_missing_author_name_fails(self):
         data = {**GOOD_PLUGIN_JSON, "author": {"name": ""}}
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_json(tmp, data)
-            errors = self.v.check_plugin_json(p)
-        self.assertTrue(any("author" in e.lower() for e in errors), errors)
+            errors = _V.check_plugin_json(p)
+        _assert_has_error(errors, "author")
 
     def test_author_not_object_fails(self):
         data = {**GOOD_PLUGIN_JSON, "author": "Brian"}
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_json(tmp, data)
-            errors = self.v.check_plugin_json(p)
-        self.assertTrue(any("author" in e.lower() for e in errors), errors)
+            errors = _V.check_plugin_json(p)
+        _assert_has_error(errors, "author")
 
     def test_invalid_json_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
             p = Path(tmp) / "plugin.json"
             p.write_text("{not valid json")
-            errors = self.v.check_plugin_json(p)
-        self.assertTrue(
-            any(
-                word in e.lower()
-                for e in errors
-                for word in ("invalid", "json", "parse")
-            ),
-            errors,
-        )
+            errors = _V.check_plugin_json(p)
+        _assert_has_error(errors, "invalid", "json", "parse")
 
     def test_missing_description_fails(self):
         data = {k: v for k, v in GOOD_PLUGIN_JSON.items() if k != "description"}
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_json(tmp, data)
-            errors = self.v.check_plugin_json(p)
-        self.assertTrue(any("description" in e.lower() for e in errors), errors)
+            errors = _V.check_plugin_json(p)
+        _assert_has_error(errors, "description")
 
 
 class TestCheckSkillMd(unittest.TestCase):
-    def setUp(self):
-        self.v = _import_validate()
-
     def _write_skill(self, parent_dir, skill_name, content):
         skill_dir = Path(parent_dir) / skill_name
         skill_dir.mkdir(parents=True, exist_ok=True)
@@ -122,7 +118,7 @@ class TestCheckSkillMd(unittest.TestCase):
     def test_good_skill_passes(self):
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_skill(tmp, "myfoo", GOOD_SKILL_MD)
-            errors = self.v.check_skill_md(p)
+            errors = _V.check_skill_md(p)
         self.assertEqual(errors, [])
 
     def test_missing_description_fails(self):
@@ -134,8 +130,8 @@ class TestCheckSkillMd(unittest.TestCase):
         """)
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_skill(tmp, "myfoo", content)
-            errors = self.v.check_skill_md(p)
-        self.assertTrue(any("description" in e.lower() for e in errors), errors)
+            errors = _V.check_skill_md(p)
+        _assert_has_error(errors, "description")
 
     def test_missing_name_fails(self):
         content = textwrap.dedent("""\
@@ -146,8 +142,8 @@ class TestCheckSkillMd(unittest.TestCase):
         """)
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_skill(tmp, "myfoo", content)
-            errors = self.v.check_skill_md(p)
-        self.assertTrue(any("name" in e.lower() for e in errors), errors)
+            errors = _V.check_skill_md(p)
+        _assert_has_error(errors, "name")
 
     def test_name_mismatch_fails(self):
         content = textwrap.dedent("""\
@@ -159,15 +155,15 @@ class TestCheckSkillMd(unittest.TestCase):
         """)
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_skill(tmp, "myfoo", content)
-            errors = self.v.check_skill_md(p)
-        self.assertTrue(any("myfoo" in e or "wrongname" in e or "match" in e.lower() for e in errors), errors)
+            errors = _V.check_skill_md(p)
+        _assert_has_error(errors, "myfoo", "wrongname", "match")
 
     def test_no_frontmatter_fails(self):
         content = "# Just a heading\n\nNo frontmatter here.\n"
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_skill(tmp, "myfoo", content)
-            errors = self.v.check_skill_md(p)
-        self.assertTrue(len(errors) > 0, errors)
+            errors = _V.check_skill_md(p)
+        _assert_has_error(errors, "frontmatter")
 
     def test_empty_description_fails(self):
         content = textwrap.dedent("""\
@@ -179,13 +175,12 @@ class TestCheckSkillMd(unittest.TestCase):
         """)
         with tempfile.TemporaryDirectory() as tmp:
             p = self._write_skill(tmp, "myfoo", content)
-            errors = self.v.check_skill_md(p)
-        self.assertTrue(any("description" in e.lower() for e in errors), errors)
+            errors = _V.check_skill_md(p)
+        _assert_has_error(errors, "description")
 
 
 class TestRealRepo(unittest.TestCase):
     def test_real_repo_passes(self):
-        import subprocess
         result = subprocess.run(
             [sys.executable, str(VALIDATE_PY)],
             capture_output=True,
@@ -203,36 +198,19 @@ WORKFLOW_PATH = REPO_ROOT / ".github" / "workflows" / "validate.yml"
 
 
 class TestWorkflowFile(unittest.TestCase):
-    """Structural tests for .github/workflows/validate.yml."""
-
-    def _load_workflow(self):
-        self.assertTrue(
-            WORKFLOW_PATH.exists(),
-            f"Workflow file not found: {WORKFLOW_PATH}",
-        )
+    @classmethod
+    def setUpClass(cls):
         import yaml
         with WORKFLOW_PATH.open() as fh:
-            return yaml.safe_load(fh)
-
-    def test_file_exists(self):
-        self.assertTrue(
-            WORKFLOW_PATH.exists(),
-            f"Expected workflow at {WORKFLOW_PATH}",
-        )
-
-    def test_valid_yaml(self):
-        workflow = self._load_workflow()
-        self.assertIsNotNone(workflow)
+            cls._workflow = yaml.safe_load(fh)
 
     def test_triggers_push_and_pull_request(self):
-        workflow = self._load_workflow()
-        on = workflow.get("on", {})
+        on = self._workflow.get("on", {})
         self.assertIn("push", on, "Workflow must trigger on push")
         self.assertIn("pull_request", on, "Workflow must trigger on pull_request")
 
     def test_runner_is_ubuntu_latest(self):
-        workflow = self._load_workflow()
-        jobs = workflow.get("jobs", {})
+        jobs = self._workflow.get("jobs", {})
         self.assertTrue(len(jobs) > 0, "Workflow must have at least one job")
         for job_name, job in jobs.items():
             self.assertEqual(
@@ -242,25 +220,21 @@ class TestWorkflowFile(unittest.TestCase):
             )
 
     def test_validate_command_present(self):
-        workflow = self._load_workflow()
-        jobs = workflow.get("jobs", {})
-        found = False
-        for job in jobs.values():
-            for step in job.get("steps", []):
-                run_cmd = step.get("run", "")
-                if "python3 scripts/validate.py" in run_cmd:
-                    found = True
+        jobs = self._workflow.get("jobs", {})
+        found = any(
+            "python3 scripts/validate.py" in step.get("run", "")
+            for job in jobs.values()
+            for step in job.get("steps", [])
+        )
         self.assertTrue(found, "No step found running 'python3 scripts/validate.py'")
 
     def test_checkout_step_present(self):
-        workflow = self._load_workflow()
-        jobs = workflow.get("jobs", {})
-        found = False
-        for job in jobs.values():
-            for step in job.get("steps", []):
-                uses = step.get("uses", "")
-                if uses.startswith("actions/checkout"):
-                    found = True
+        jobs = self._workflow.get("jobs", {})
+        found = any(
+            step.get("uses", "").startswith("actions/checkout")
+            for job in jobs.values()
+            for step in job.get("steps", [])
+        )
         self.assertTrue(found, "No checkout step found in workflow")
 
 
