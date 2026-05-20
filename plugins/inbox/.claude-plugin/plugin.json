@@ -1,0 +1,8 @@
+{
+  "name": "inbox",
+  "description": "Process a Things GTD inbox.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Brian Samek"
+  }
+}
