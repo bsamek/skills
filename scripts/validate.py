@@ -21,10 +21,6 @@ PLUGIN_JSON = REPO_ROOT / "plugins" / "bsamek" / ".claude-plugin" / "plugin.json
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 
 
-# ---------------------------------------------------------------------------
-# check_plugin_json
-# ---------------------------------------------------------------------------
-
 def check_plugin_json(path: Path) -> list[str]:
     """Return a list of error strings; empty list means all checks passed."""
     errors: list[str] = []
@@ -61,10 +57,6 @@ def check_plugin_json(path: Path) -> list[str]:
     return errors
 
 
-# ---------------------------------------------------------------------------
-# check_skill_md
-# ---------------------------------------------------------------------------
-
 def _parse_frontmatter(text: str) -> dict[str, str] | None:
     """Return the frontmatter key/value pairs, or None if no frontmatter found."""
     lines = text.splitlines()
@@ -89,7 +81,6 @@ def _parse_frontmatter(text: str) -> dict[str, str] | None:
 def check_skill_md(path: Path) -> list[str]:
     """Return a list of error strings; empty list means all checks passed."""
     errors: list[str] = []
-    rel = path.relative_to(path.parent.parent.parent) if path.is_absolute() else path
 
     try:
         text = path.read_text()
@@ -111,7 +102,6 @@ def check_skill_md(path: Path) -> list[str]:
     if not desc_val:
         errors.append(f"{path}: frontmatter 'description' is missing or empty")
 
-    # name must match the parent directory name
     expected_name = path.parent.name
     if name_val and name_val != expected_name:
         errors.append(
@@ -121,10 +111,6 @@ def check_skill_md(path: Path) -> list[str]:
 
     return errors
 
-
-# ---------------------------------------------------------------------------
-# main
-# ---------------------------------------------------------------------------
 
 def main() -> int:
     all_ok = True
