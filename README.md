@@ -1,16 +1,13 @@
 # bsamek/skills
 
-A marketplace of Claude Code skills. Install the whole marketplace with:
+A marketplace containing a single `bsamek` plugin with four skills. Install with:
 
 ```
 /plugin marketplace add bsamek/skills
+/plugin install bsamek@skills
 ```
 
-Then install individual skills with:
-
-```
-/plugin install <name>@bsamek-skills
-```
+Skills are invoked as `bsamek:<skill>` (e.g. `bsamek:preflight`).
 
 ## Skills
 
