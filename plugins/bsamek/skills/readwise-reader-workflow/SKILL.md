@@ -57,7 +57,7 @@ For "next N articles in inbox", default N to 1. Reader calls Inbox `new`.
 ```bash
 readwise --json reader-list-documents \
   --location new \
-  --limit 1000 \
+  --limit 100 \
   --response-fields id,title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
 ```
 
@@ -81,7 +81,7 @@ For "next article in Later", return the single oldest saved Later item.
 ```bash
 readwise --json reader-list-documents \
   --location later \
-  --limit 1000 \
+  --limit 100 \
   --response-fields id,title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
 ```
 
@@ -101,7 +101,7 @@ items unless Brian asks otherwise.
 readwise --json reader-list-documents \
   --location feed \
   --seen false \
-  --limit 1000 \
+  --limit 100 \
   --response-fields id,title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
 ```
 
