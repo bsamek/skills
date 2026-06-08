@@ -1,6 +1,6 @@
 ---
 name: readwise-reader-workflow
-description: Use when reading Readwise Reader with Brian: triage oldest-saved Inbox or Feed items, get the next oldest-saved Later item, or read and summarize an article from Later using the Readwise CLI.
+description: "Use when reading Readwise Reader with Brian: triage oldest-saved Inbox or Feed items, get the next oldest-saved Later item, or read and summarize an article from Later using the Readwise CLI."
 ---
 
 # Readwise Reader Workflow
@@ -47,8 +47,11 @@ If the queue may be larger than the limit and exact oldest matters, paginate wit
 Shared response fields:
 
 ```bash
-id,title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
+title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
 ```
+
+The CLI always returns `id`; do not include `id` in `--response-fields` because
+it is not an accepted value there.
 
 ### Inbox
 
@@ -58,7 +61,7 @@ For "next N articles in inbox", default N to 1. Reader calls Inbox `new`.
 readwise --json reader-list-documents \
   --location new \
   --limit 100 \
-  --response-fields id,title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
+  --response-fields title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
 ```
 
 Then select `.results | sort_by(.saved_at) | .[:N]`.
@@ -82,7 +85,7 @@ For "next article in Later", return the single oldest saved Later item.
 readwise --json reader-list-documents \
   --location later \
   --limit 100 \
-  --response-fields id,title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
+  --response-fields title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
 ```
 
 Then select `.results | sort_by(.saved_at) | .[0]`.
@@ -102,7 +105,7 @@ readwise --json reader-list-documents \
   --location feed \
   --seen false \
   --limit 100 \
-  --response-fields id,title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
+  --response-fields title,author,url,source_url,site_name,category,tags,word_count,reading_time,listening_time,saved_at,published_date,summary,location,first_opened_at
 ```
 
 Then select `.results | sort_by(.saved_at) | .[:N]`.

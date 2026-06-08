@@ -178,6 +178,32 @@ class TestCheckSkillMd(unittest.TestCase):
             errors = _V.check_skill_md(p)
         _assert_has_error(errors, "description")
 
+    def test_unquoted_colon_in_description_fails(self):
+        content = textwrap.dedent("""\
+            ---
+            name: myfoo
+            description: Use when reading with Brian: triage items.
+            ---
+            # Body
+        """)
+        with tempfile.TemporaryDirectory() as tmp:
+            p = self._write_skill(tmp, "myfoo", content)
+            errors = _V.check_skill_md(p)
+        _assert_has_error(errors, "frontmatter")
+
+    def test_quoted_colon_in_description_passes(self):
+        content = textwrap.dedent("""\
+            ---
+            name: myfoo
+            description: "Use when reading with Brian: triage items."
+            ---
+            # Body
+        """)
+        with tempfile.TemporaryDirectory() as tmp:
+            p = self._write_skill(tmp, "myfoo", content)
+            errors = _V.check_skill_md(p)
+        self.assertEqual(errors, [])
+
 
 class TestRealRepo(unittest.TestCase):
     def test_real_repo_passes(self):
@@ -200,7 +226,10 @@ WORKFLOW_PATH = REPO_ROOT / ".github" / "workflows" / "validate.yml"
 class TestWorkflowFile(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        import yaml
+        try:
+            import yaml
+        except ModuleNotFoundError as exc:
+            raise unittest.SkipTest("PyYAML is not installed") from exc
         with WORKFLOW_PATH.open() as fh:
             cls._workflow = yaml.safe_load(fh)
 

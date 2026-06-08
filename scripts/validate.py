@@ -60,7 +60,14 @@ def _parse_frontmatter(text: str) -> dict[str, str] | None:
     for line in fm_lines:
         if ":" in line:
             key, _, value = line.partition(":")
-            result[key.strip()] = value.strip().strip('"').strip("'")
+            raw_value = value.strip()
+            if (
+                raw_value
+                and not raw_value.startswith(('"', "'"))
+                and ": " in raw_value
+            ):
+                return None
+            result[key.strip()] = raw_value.strip('"').strip("'")
     return result
 
 
