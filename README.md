@@ -1,6 +1,6 @@
 # bsamek/skills
 
-A marketplace containing a single `bsamek` plugin with five skills. Install with:
+A marketplace containing a single `bsamek` plugin with six skills. Install with:
 
 ```
 /plugin marketplace add bsamek/skills
@@ -30,6 +30,10 @@ Read Readwise Reader with Brian: triage oldest-saved Inbox or Feed items, fetch 
 ### walkthrough
 
 Walk through a branch's diff chunk by chunk for self-review. Use before opening a PR to catch issues that automated checks miss.
+
+### worktree
+
+Create a git worktree and branch for a Jira ticket in one step. Looks up the ticket, derives a short slug from the summary, creates the worktree, and changes into it. Note: this skill assumes Brian's `jira` CLI setup and `.claude/worktrees/` layout.
 
 ## License
 
