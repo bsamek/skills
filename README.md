@@ -1,6 +1,6 @@
 # bsamek/skills
 
-A marketplace containing a single `bsamek` plugin with four skills. Install with:
+A marketplace containing a single `bsamek` plugin with five skills. Install with:
 
 ```
 /plugin marketplace add bsamek/skills
@@ -22,6 +22,10 @@ Process a GTD inbox in the Things app. Note: this skill is tailored to Brian's p
 ### preflight
 
 Dispatch parallel Opus and OpenCode reviews of a branch before opening a pull request. Surfaces issues early without blocking the author.
+
+### readwise-reader-workflow
+
+Read Readwise Reader with Brian: triage oldest-saved Inbox or Feed items, fetch the next oldest-saved Later item, and summarize Later articles.
 
 ### walkthrough
 
