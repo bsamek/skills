@@ -2,6 +2,6 @@
   "name": "skills",
   "owner": { "name": "Brian Samek" },
   "plugins": [
-    { "name": "bsamek", "source": "./plugins/bsamek", "description": "Brian Samek's personal Claude Code skills (preflight, walkthrough, delegated-plan-execution, inbox, readwise-reader-workflow, worktree)." }
+    { "name": "bsamek", "source": "./plugins/bsamek", "description": "Brian Samek's personal Claude Code skills (preflight, walkthrough, delegated-plan-execution, inbox, readwise-reader-workflow, worktree, pr-comments)." }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "bsamek",
-  "description": "Brian Samek's personal Claude Code skills (preflight, walkthrough, delegated-plan-execution, inbox, readwise-reader-workflow, worktree).",
-  "version": "0.4.0",
+  "description": "Brian Samek's personal Claude Code skills (preflight, walkthrough, delegated-plan-execution, inbox, readwise-reader-workflow, worktree, pr-comments).",
+  "version": "0.5.0",
   "author": { "name": "Brian Samek" }
 }

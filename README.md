@@ -1,6 +1,6 @@
 # bsamek/skills
 
-A marketplace containing a single `bsamek` plugin with six skills. Install with:
+A marketplace containing a single `bsamek` plugin with seven skills. Install with:
 
 ```
 /plugin marketplace add bsamek/skills
@@ -18,6 +18,10 @@ Orchestrate Plan-mode execution by delegating each step to a Sonnet implementer,
 ### inbox
 
 Process a GTD inbox in the Things app. Note: this skill is tailored to Brian's personal Things setup and is included as a worked example rather than a general-purpose tool.
+
+### pr-comments
+
+Review the comments on the current branch's PR and evaluate whether each should be addressed, with reasoning. Read-only: it advises, it does not change code.
 
 ### preflight
 
