@@ -1,6 +1,6 @@
 # bsamek/skills
 
-A marketplace containing a single `bsamek` plugin with seven skills. Install with:
+A marketplace containing a single `bsamek` plugin with six skills. Install with:
 
 ```
 /plugin marketplace add bsamek/skills
@@ -25,7 +25,7 @@ Review the comments on the current branch's PR and evaluate whether each should 
 
 ### preflight
 
-Dispatch parallel Opus and OpenCode reviews of a branch before opening a pull request. Surfaces issues early without blocking the author.
+Run an OpenCode review (GPT-5.5) of a branch before opening a pull request. Surfaces issues early without blocking the author.
 
 ### readwise-reader-workflow
 
@@ -34,10 +34,6 @@ Read Readwise Reader with Brian: triage oldest-saved Inbox or Feed items, fetch 
 ### walkthrough
 
 Generate a self-contained HTML document that walks a reviewer through the branch's changes, organized into logical sections with rendered diffs and risk callouts, then open it in the browser. Use before opening a PR.
-
-### worktree
-
-Create a git worktree and branch for a Jira ticket in one step. Looks up the ticket, derives a short slug from the summary, creates the worktree, and changes into it. Note: this skill assumes Brian's `jira` CLI setup and `.claude/worktrees/` layout.
 
 ## License
 
