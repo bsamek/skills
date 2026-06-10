@@ -13,7 +13,7 @@ Skills are invoked as `bsamek:<skill>` (e.g. `bsamek:preflight`).
 
 ### delegated-plan-execution
 
-Orchestrate Plan-mode execution by delegating each step to a Sonnet implementer, then to a fresh Sonnet validator. One fix pass on failure, then escalates to the orchestrator.
+Orchestrate Plan-mode execution by delegating each step to a Sonnet implementer, then to fresh Sonnet spec-compliance and code-quality validators. One fix pass on failure, then escalates to the orchestrator.
 
 ### inbox
 
@@ -33,7 +33,7 @@ Read Readwise Reader with Brian: triage oldest-saved Inbox or Feed items, fetch 
 
 ### walkthrough
 
-Walk through a branch's diff chunk by chunk for self-review. Use before opening a PR to catch issues that automated checks miss.
+Generate a self-contained HTML document that walks a reviewer through the branch's changes, organized into logical sections with rendered diffs and risk callouts, then open it in the browser. Use before opening a PR.
 
 ### worktree
 
